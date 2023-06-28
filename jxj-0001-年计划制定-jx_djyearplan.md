@@ -1,0 +1,160 @@
+年计划制定页面   
+功能名称：年计划制定页面     
+页面名称：jx_Djyearplan   
+页面ID：jxj-0001   
+
+1 功能概要：
+在此页面中，用户可以制定年度点检计划，选择设备并设置点检周期和点检负责人。用户可以对当年的点检计划进行删除和修改，并可以提交点检计划进行审批。主要功能包括点检计划查询、点检新增内容、点检设备删除、点检内容修改、点检计划提交和点检计划列表。
+主要功能包括：
+1 点检计划查询
+2 点检新增内容
+3 点检设备删除
+4 点检内容修改
+5 点检计划提交
+6 点检计划列表
+使用方法：
+1. 通过点检计划查询，将符合查询条件的点检计划信息显示在点检计划列表中。
+2. 点检内容设置中通过选择设备列表中选择需要制定计划的设备。
+3. 通过2中选择的设备信息，填写它的点检计划内容。
+4. 点击点检计划列表中的修改按钮，可以修改这个计划内容。
+5. 点击点检计划列表中的删除按钮，可以删除这个计划内容。
+6. 点检计划提交按钮，当年的所有点检计划提交到审批状态中。
+
+2 UI设计文档格式：
+页面UI布局
+UI布局：页面分为上下两部分，上部分查询，下部分列表。
+查询部分
+|标题|类型|I/Q值|功能|
+|年|下拉|year|  | 
+|查询|按钮| | 刷新点检计划列表 | 
+|新增计划|按钮| | 弹出框（设备选择弹出框） | 
+|计划审批|按钮| |弹出框中确认是否提交计划  | 
+列表部分
+|no|列名|参数|说明|
+|1|单位| pl_deptid| |
+|2|工区| pl_areaid| |
+|3|设备名称| equipment_name| |
+|4|设备编号| equipment_number| |
+|5|设备位置| equipment_location| |
+|6|探伤| is_probe| |
+|7|探伤检测周期| probe_period|检测周期（每季度，每天，每周，每月，每年）|
+|8|电机| is_motor| |
+|9|电机检测周期| motor_period|检测周期（每季度，每天，每周，每月，每年）|
+|10|热像| is_thermal| |
+|11|热像检测周期| thermal_period|检测周期（每季度，每天，每周，每月，每年）|
+|12|电机点数| motor_points| |
+|13|电机备注| motor_remark| |
+|14|热像点数| thermal_points| |
+|15|热像备注| thermal_remark| |
+|16|探伤点数| probe_points| |
+|17|探伤备注| probe_remark| |
+|18|操作|按钮|修改（弹出框中修改计划内容），删除（确认删除）|
+操作列： 修改（弹出框中修改计划内容），删除（确认删除）
+设备选择弹出框
+UI布局：弹出框上下两部分，上部分查询，下部分设备列表。
+类型：弹出框
+触发条件：点击新增计划后触发
+查询部分
+|标题|类型|I/Q值|功能|
+| 工区|下拉|deptnumber |  | 
+| 设备名称与编号  |文本|name|  | 
+| 查询  |按钮| 刷新设备列表| 
+设备列表
+|no|列名|类型|参数|功能描述| 
+|1| 工区|文本| |  | 
+|2| 设备名称  |文本| |  | 
+|3| 设备编号  |文本| | | 
+|4| 设备地址  |文本| |  | 
+|5| 填写计划  |按钮| 弹出框 |弹出框（计划添加弹出框）| 
+计划添加弹出框
+触发条件：设备列表中点击填写计划和点检计划列表中选择点击修改后触发
+类型：弹出框
+内容：精密点检计划记录表中的属性
+
+3 API设计
+1 点检年计划查询
+------------------------------------------
+url路径：get /sys/con/plan-find-list
+参数：
+|项目名|参数|
+|年|year|
+返回值：{"code": 0,"data": [数据库查询内容]}
+业务描述：查询设备计划表，查询当年和单位的计划信息列表。
+----------------------------------------------
+2 点检年计划添加
+------------------------------------------
+url路径：post /sys/con/plan-find-save
+参数：设备计划表中的所有属性值
+返回值：{"code": 0,"data":[结果]}
+业务描述：填写设备计划表所有属性内容
+----------------------------------------------
+3 工区设备查询
+------------------------------------------
+url路径：post /sys/con/coeq-find-save
+参数：
+|项目名|参数|
+|单位|dept|
+|工区|addept|
+返回值：{"code": 0,"data":[数据库查询内容]}
+业务描述：查询设备表，查询条件是单位编码与工区编码。
+----------------------------------------------
+
+3 使用到数据库
+设备表（jx_eq）
+| 列名  | 数据类型 | 长度 | 备注   |
+| eqid  | varchar    | 60   | UUID |
+| eqnumber | varchar | 60   | 设备编号  |
+| eqname   | varchar | 50   | 设备名称 |
+| eqaddress| varchar | 100  | 设备地址  |
+| deptname  | varchar |20 | 设备单位  |
+| deptnumber| varchar | 30  | 单位编号 |
+| teamname | varchar |      | 班组名称 |
+| teamname | varchar |      | 班组编号 |
+| classname | varchar |      |设备类型名称 |
+| clnumber | varchar |      | 设备类型编号 |
+| is_del | varchar |  1    | 删除编号 |
+
+精密点检计划记录表（|jx_djplan_log）
+| 列名|数据类型|长度| 备注  |
+|pyid| varchar|128| UUID| 
+|pl_deptid |varchar|20|计划单位编号| 
+|pl_areaid|varchar|30|计划工区编号|
+|pl_dept |varchar|20|计划单位| 
+|pl_area|varchar|30|计划工区|
+|equipment_name|varchar|50|设备名称|
+|equipment_number |varchar|60|设备编号|
+|equipment_location| varchar|100|设备地址|
+|is_probe| varchar|10|是否有探伤|
+|is_motor| varchar|10|是否有电机|
+|is_thermal| varchar|10|是否有热像|
+|probe_period|varchar|20|探伤检测周期| 
+|motor_period| varchar|20|电机检测周期| 
+|thermal_period|varchar|20|热像检测周期| 
+|motor_points|varchar|60|电机点数| 
+|motor_remark|varchar|50|电机备注| 
+|thermal_points|varchar|60|热像点数| 
+|thermal_remark|varchar|50|热像备注| 
+|probe_points|varchar|60|探伤点数| 
+|probe_remark|varchar|50|探伤备注| 
+|is_del|varchar|1|是否删除| 
+|is_type|varchar|1|审批标记| 
+|is_cl|varchar|1|计划类型（0年计划，1月计划，2季度计划，3周计划）| 
+|c_time|varchar|30|创建时间| 
+|c_userid|varchar|40|创建人id| 
+|c_user|varchar|40|创建名称| 
+|p_year|varchar|40|计划年| 
+|p_quarterly|varchar|40|计划季度| 
+|p_Weekly|varchar|40|计划周| 
+
+点检审批计划流程表（jx_djplan_approve）
+| 列名  | 数据类型 | 长度 | 备注   |
+| pyid | varchar |128| UUID|
+| step_no | int | 11 | 审批步骤编号 |
+| step_name | varchar | 50 | 审批步骤名称 |
+| deptid | varchar | 50 | 审批人部门ID |
+| approver_id | varchar | 50 | 审批人ID |
+| deptname | varchar | 50 | 审批人部门 |
+| approver_name | varchar | 50 | 审批人|
+| is_required | tinyint | 1 | 是否必须审批 |
+| is_finished | tinyint | 1 | 是否已完成审批 |
+| approved_date | timestamp | 无 | 审批日期 |
